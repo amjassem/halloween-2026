@@ -1,0 +1,19 @@
+# Environment & Secrets
+.env
+*.env
+
+# Temporary generation scratch & raw downloads
+scratch_downloads/
+output_videos/
+bin/
+
+# Python cache & virtual environments
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+
+# OS metadata
+.DS_Store
+Thumbs.db

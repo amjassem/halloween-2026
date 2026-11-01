@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>Underwater Horror • Halloween 2026 Transformations</title>
+  <meta name="description" content="Interactive AI transformations and transition videos from the Halloween 2026 Underwater Horror party.">
+  <meta name="theme-color" content="#03080e">
+
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌊</text></svg>">
+
+  <!-- Google Fonts: Cinzel (Eerie Elegant Serif) & Outfit (Modern Clean Sans) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800;900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Core Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ========================================== -->
+  <!-- Ambient Bioluminescent Canvas Background   -->
+  <!-- ========================================== -->
+  <canvas id="ambient-canvas" class="ambient-canvas"></canvas>
+  <div class="video-vignette"></div>
+
+  <!-- ========================================== -->
+  <!-- Main Application Wrapper                   -->
+  <!-- ========================================== -->
+  <div class="app-wrapper">
+
+    <!-- Header Section -->
+    <header class="site-header">
+      <div class="header-content">
+        <div class="header-badge">
+          <span class="badge-dot"></span>
+          <span>Halloween 2026</span>
+        </div>
+        <h1 class="site-title">UNDERWATER HORROR</h1>
+        <p class="site-subtitle">Original Party Photos &amp; AI Transformations</p>
+
+        <div class="header-stats">
+          <span id="stat-videos-ready">59 morphs ready</span>
+        </div>
+      </div>
+
+      <!-- Category Filter Pills -->
+      <nav class="filter-nav" aria-label="Theme categories">
+        <div id="filter-pills" class="filter-pills-scroll">
+          <button class="filter-pill active" data-theme="all">
+            <span class="pill-title">All Photos</span>
+            <span class="pill-count" id="count-all">59</span>
+          </button>
+          <!-- Dynamic theme pills populated from photos.json -->
+        </div>
+      </nav>
+    </header>
+
+    <!-- Gallery Grid (Untransformed Photos Base) -->
+    <main class="gallery-container">
+      <div id="gallery-grid" class="gallery-grid" role="region" aria-label="Photo Gallery">
+        <!-- Photo Cards dynamically injected here -->
+      </div>
+
+      <!-- Empty State -->
+      <div id="gallery-empty" class="gallery-empty hidden">
+        <div class="empty-icon">🌊</div>
+        <h3>No Photos Found</h3>
+        <p>No photos match the selected category filter.</p>
+        <button id="btn-reset-filter" class="btn btn-secondary">View All Photos</button>
+      </div>
+    </main>
+
+    <!-- Minimalist Footer -->
+    <footer class="site-footer">
+      <p>Dark Waters 2026 • Tap any photo to reveal its underwater transformation</p>
+    </footer>
+
+  </div>
+
+  <!-- ========================================== -->
+  <!-- Interactive Lightbox / Comparison Modal    -->
+  <!-- ========================================== -->
+  <div id="modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    
+    <div class="modal-container">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <div class="modal-meta">
+          <span id="modal-theme-badge" class="badge-theme">Victorian Ballroom</span>
+          <h2 id="modal-title" class="modal-title">Photo #01</h2>
+          <span id="modal-time" class="modal-time">08:50 PM</span>
+        </div>
+
+        <div class="modal-actions-top">
+          <!-- Prompt toggle button -->
+          <button id="btn-toggle-prompt" class="icon-btn" title="View AI Prompt" aria-label="View AI Prompt">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </button>
+          
+          <!-- Share button -->
+          <button id="btn-share" class="icon-btn" title="Copy Photo Link" aria-label="Copy Photo Link">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+          </button>
+
+          <!-- Close button -->
+          <button id="btn-close-modal" class="icon-btn close-btn" title="Close (Esc)" aria-label="Close modal">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Prompt Banner Drawer (Collapsible) -->
+      <div id="modal-prompt-drawer" class="prompt-drawer hidden">
+        <div class="prompt-drawer-inner">
+          <span class="prompt-label">AI Transformation Prompt:</span>
+          <p id="modal-prompt-text" class="prompt-text"></p>
+        </div>
+      </div>
+
+      <!-- Mode Selector Bar (Photo Slider vs Video Morph) -->
+      <div class="view-mode-bar">
+        <button id="mode-photo-slider" class="mode-pill active" title="Compare original photo with transformed photo">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="3" x2="12" y2="21"/></svg>
+          <span>Photo Slider</span>
+        </button>
+
+        <button id="mode-full-video" class="mode-pill" title="5s AI Video Morph with timeline slider">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+          <span>Video Morph</span>
+        </button>
+      </div>
+
+      <!-- ========================================== -->
+      <!-- Interactive Comparison Stage               -->
+      <!-- ========================================== -->
+      <div class="stage-wrapper">
+
+        <!-- Navigation Chevrons: Positioned outwards, outside the stage image -->
+        <button id="btn-prev-photo" class="nav-chevron prev" title="Previous Photo (Left Arrow)" aria-label="Previous Photo">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+
+        <!-- Main Viewer Canvas/Container -->
+        <div id="comparison-stage" class="comparison-stage" style="--slider-pos: 50%;">
+
+          <!-- BOTTOM LAYER: Original Photo (Base) -->
+          <div class="layer-base">
+            <img id="stage-orig-img" class="stage-media orig-img" src="" alt="Original Photo">
+          </div>
+
+          <!-- TOP LAYER: Transformed Media (Image or Video, Clipped from left) -->
+          <div id="layer-transformed" class="layer-transformed">
+            <!-- Transformed Static Image -->
+            <img id="stage-trans-img" class="stage-media trans-img" src="" alt="Transformed Photo">
+            
+            <!-- Video for Video Morph mode -->
+            <video id="stage-video" class="stage-media trans-video hidden" playsinline muted loop preload="auto"></video>
+          </div>
+
+          <!-- Clickable Badges: Click to snap to 100% Original or 100% Transformed -->
+          <button type="button" id="btn-show-original" class="layer-badge badge-orig" title="Click to view 100% Original photo (Min / 0%)">Original</button>
+          <button type="button" id="btn-show-transformed" class="layer-badge badge-trans" title="Click to view 100% Transformed photo (Max / 100%)">Transformed</button>
+
+          <!-- The Draggable Divider Handle -->
+          <div id="slider-handle" class="slider-handle">
+            <div class="handle-line"></div>
+            <div class="handle-grip">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M8 5l-5 7 5 7V5zm8 0v14l5-7-5-7z"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Loading Indicator Overlay -->
+          <div id="stage-loader" class="stage-loader hidden">
+            <div class="spinner"></div>
+            <span>Loading Media...</span>
+          </div>
+
+        </div>
+
+        <button id="btn-next-photo" class="nav-chevron next" title="Next Photo (Right Arrow)" aria-label="Next Photo">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+
+      </div>
+
+      <!-- Video Playback Control Bar with Interactive Time Slider -->
+      <div id="video-controls-bar" class="video-controls-bar hidden">
+        <button id="btn-video-play" class="btn-play-pause" title="Play / Pause (Space)">
+          <svg id="icon-play" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          <svg id="icon-pause" class="hidden" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+        </button>
+
+        <!-- Time scrubber slider to select video time -->
+        <div class="video-slider-wrap">
+          <input type="range" id="video-time-slider" class="video-time-slider" min="0" max="100" step="0.1" value="0" aria-label="Video timeline slider">
+        </div>
+
+        <span id="video-time-display" class="video-time">0:00 / 0:05</span>
+        
+        <button id="btn-video-loop" class="btn-loop active" title="Toggle Loop">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+        </button>
+      </div>
+
+      <!-- Quick Hint on Mobile/Desktop -->
+      <div class="stage-instructions">
+        <span class="desktop-hint">Drag slider or click Original / Transformed • Press Space to toggle (0 / 100%)</span>
+        <span class="mobile-hint">Swipe left/right to browse • Tap Original / Transformed to toggle</span>
+      </div>
+
+      <!-- ========================================== -->
+      <!-- Download Action Bar                        -->
+      <!-- ========================================== -->
+      <div class="modal-download-bar">
+        <!-- Download Untransformed Original (Violet) -->
+        <a id="btn-dl-orig" class="btn btn-download dl-violet" download href="#">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <span>Download Original</span>
+          <small class="dl-size" id="dl-orig-size">HD JPG</small>
+        </a>
+
+        <!-- Download Transformed (Blue) -->
+        <a id="btn-dl-trans" class="btn btn-download dl-blue" download href="#">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <span>Download Transformed</span>
+          <small class="dl-size" id="dl-trans-size">HD PNG</small>
+        </a>
+
+        <!-- Download Video (Eerie Green) -->
+        <a id="btn-dl-video" class="btn btn-download dl-green" download href="#">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+          <span>Download Video</span>
+          <small class="dl-size" id="dl-video-size">5s MP4</small>
+        </a>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Toast Notification (e.g. Link Copied) -->
+  <div id="toast" class="toast hidden">
+    <span id="toast-message">Link copied to clipboard!</span>
+  </div>
+
+  <!-- Application Logic -->
+  <script type="module" src="app.js"></script>
+</body>
+</html>
