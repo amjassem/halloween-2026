@@ -631,44 +631,8 @@ class DarkWatersGallery {
     window.addEventListener("pointerup", onPointerUp);
     window.addEventListener("pointercancel", onPointerUp);
 
-    // Mobile Swipe Navigation - Disabled within photo stage and video slider controls
-    this.touchBlockSwipe = false;
-
-    this.modal?.addEventListener("touchstart", (e) => {
-      const touch = e.changedTouches[0];
-      this.touchStartX = touch.clientX;
-      this.touchStartY = touch.clientY;
-
-      // Disable swiping if touch originates anywhere inside the photo stage, stage wrapper, video controls, or download bar
-      const target = e.target;
-      if (target && target.closest(".stage-wrapper, .comparison-stage, #video-controls-bar, .video-slider-wrap, .modal-download-bar")) {
-        this.touchBlockSwipe = true;
-      } else {
-        this.touchBlockSwipe = false;
-      }
-    }, { passive: true });
-
-    this.modal?.addEventListener("touchend", (e) => {
-      // Never switch photos if touch originated or ended in the photo frame/controls, or while dragging/scrubbing
-      if (this.touchBlockSwipe || this.isDragging || this.isVideoScrubbing) {
-        this.touchBlockSwipe = false;
-        return;
-      }
-
-      const endTarget = e.target;
-      if (endTarget && endTarget.closest(".stage-wrapper, .comparison-stage, #video-controls-bar, .video-slider-wrap, .modal-download-bar")) {
-        return;
-      }
-
-      const diffX = e.changedTouches[0].clientX - this.touchStartX;
-      const diffY = e.changedTouches[0].clientY - this.touchStartY;
-
-      // Horizontal swipe threshold (only applies outside the photo frame)
-      if (Math.abs(diffX) > 60 && Math.abs(diffX) > Math.abs(diffY) * 1.5) {
-        if (diffX < 0) this.nextPhoto();
-        else this.prevPhoto();
-      }
-    }, { passive: true });
+    // Note: Touch swiping to switch photos has been completely disabled as requested,
+    // ensuring slider dragging and video scrubbing never trigger accidental photo switching.
 
     // Video Player Events & Time Scrubber Slider
     this.btnVideoPlay?.addEventListener("click", () => this.toggleVideoPlay());
